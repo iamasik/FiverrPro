@@ -1,0 +1,59 @@
+{
+"update_url": "https://clients2.google.com/service/update2/crx",
+
+    "manifest_version": 3,
+    "name": "Fiverr Pro",
+    "short_name": "Fiverr Pro",
+    "version": "5.0.0",
+    "minimum_chrome_version": "88",
+    "icons": {
+        "16": "icon16.png",
+        "32": "icon32.png",
+        "48": "icon48.png",
+        "128": "icon.png"
+    },
+    "description": "Fiverr Pro - Toolkit for Fiverr Freelancers to increase productivity, discover analytics, ranking and AI services for gigs.",
+    "author": "Softink Lab",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAio2yms1yWMyHBnZcCjf8bdITVxbcrmpd++YxQ3mjZRuGAAytDx3+3baDUgPzA/Le9MGZ3imXiOlbP6UXxRj6GaMUjG0DGAQiq2prb7BvIOgZjLwr7E8kVOhOLz5K9SGG9fnu/JcZbYshTuwM+E2YgkfGZsXJrbe45vjkHO52whSW9QT7TKlKui1UsdcPZdHzyNJrTajNwGkoQxeuVC2bD9JE/KWLqLVEB7Dpxpw0uk9/DexhDIK+jsJjdRDS6parz2lHewFSIdHfe5L7smSPBtavfUKGaHgBPYSbtVTLEqOWLTCRTDzMAlyZZk2IeoTKFOPO7WfocxVAV5JKrRxvJQIDAQAB",
+    "content_scripts": [
+        {
+            "matches": [
+                "*://fiverr.com/*",
+                "*://*.fiverr.com/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "css/content.css"
+            ],
+            "run_at": "document_start"
+        }
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        "storage",
+        "notifications",
+        "alarms"
+    ],
+    "host_permissions": [
+        "*://www.emlinter.com/*"
+    ],
+    "externally_connectable": {
+        "matches": [
+            "*://www.emlinter.com/*"
+        ]
+    },
+    "action": {
+        "default_icon": {
+            "16": "icon16.png",
+            "32": "icon32.png",
+            "48": "icon48.png",
+            "128": "icon.png"
+        },
+        "default_title": "Fiverr Pro",
+        "default_popup": "popup.html"
+    }
+}
