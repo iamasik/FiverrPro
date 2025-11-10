@@ -6,37 +6,91 @@
 </head>
 
 <body>
-
     <div class="header">
-        <img src="icon.png" width="50px">
-        <div>
-            <span class="header_title">Fiverr Pro</span><br>
-            <span class="version">Version : 5.0.0</span>
+        <div class="header-left">
+            <div class="logo-container">
+                <div class="logo-icon">F</div>
+                <div class="logo-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-title-container">
+                <span class="header-title">Fiverr Pro</span>
+                <span class="version">Version: 2.1.1</span>
+            </div>
         </div>
     </div>
 
-    <div class="options" id="options-container">
-        <h2>Features Control</h2>
-        <div class="switch">
-            <input type="checkbox" id="naft" class="switch__input">
-            <label for="naft" class="switch__label">Notifications & Message Alerts</label>
+    <div class="features-grid" id="options-container">
+        <div class="feature-card">
+            <div class="toggle-container">
+                <input type="checkbox" id="naft" class="toggle-input">
+                <label for="naft" class="toggle-label">
+                    <span class="toggle-slider">
+                        <span class="toggle-text toggle-text-off">OFF</span>
+                        <span class="toggle-handle"></span>
+                        <span class="toggle-text toggle-text-on">ON</span>
+                    </span>
+                </label>
+            </div>
+            <div class="feature-label">Notification Alerts</div>
         </div>
-        <div class="switch">
-            <input type="checkbox" id="fvui" class="switch__input">
-            <label for="fvui" class="switch__label">UI Enhancements & Shortcuts</label>
+
+        <div class="feature-card">
+            <div class="toggle-container">
+                <input type="checkbox" id="hmbl" class="toggle-input">
+                <label for="hmbl" class="toggle-label">
+                    <span class="toggle-slider">
+                        <span class="toggle-text toggle-text-off">OFF</span>
+                        <span class="toggle-handle"></span>
+                        <span class="toggle-text toggle-text-on">ON</span>
+                    </span>
+                </label>
+            </div>
+            <div class="feature-label">Hide Balance</div>
         </div>
-        <div class="switch">
-            <input type="checkbox" id="hmbl" class="switch__input">
-            <label for="hmbl" class="switch__label">Hide My Balance</label>
+
+        <div class="feature-card">
+            <div class="toggle-container">
+                <input type="checkbox" id="fvdm" class="toggle-input">
+                <label for="fvdm" class="toggle-label">
+                    <span class="toggle-slider">
+                        <span class="toggle-text toggle-text-off">OFF</span>
+                        <span class="toggle-handle"></span>
+                        <span class="toggle-text toggle-text-on">ON</span>
+                    </span>
+                </label>
+            </div>
+            <div class="feature-label">Dark Mode</div>
         </div>
-        <div class="switch">
-            <input type="checkbox" id="fvdm" class="switch__input">
-            <label for="fvdm" class="switch__label">Dark Mode</label>
+
+        <div class="feature-card">
+            <div class="toggle-container">
+                <input type="checkbox" id="hop" class="toggle-input">
+                <label for="hop" class="toggle-label">
+                    <span class="toggle-slider">
+                        <span class="toggle-text toggle-text-off">OFF</span>
+                        <span class="toggle-handle"></span>
+                        <span class="toggle-text toggle-text-on">ON</span>
+                    </span>
+                </label>
+            </div>
+            <div class="feature-label">Hide Order Price</div>
         </div>
     </div>
 
     <div class="footer">
-        <span class="footer">Extension By : <a href="https://www.emlinter.com" target="_blank" class="link">Fiverr Pro</a></span>
+        <div class="footer-left">
+            <span class="developed-by">Developed By</span>
+            <span class="developer-name">EMLinter</span>
+        </div>
+        <div class="footer-right">
+            <a href="https://www.emlinter.com" target="_blank" class="footer-link">www.emlinter.com</a>
+        </div>
     </div>
 </body>
 
