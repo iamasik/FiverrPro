@@ -328,10 +328,10 @@ body {
 
 .footer-link {
     display: inline-block;
-    padding: 12px 24px;
+    padding: 8px 16px;
     background: transparent;
     border: none;
-    border-radius: 8px;
+    border-radius: 9999px;
     color: #e5e7eb;
     text-decoration: none;
     font-size: 13px;
@@ -344,7 +344,7 @@ body {
     content: '';
     position: absolute;
     inset: -2px;
-    border-radius: 8px;
+    border-radius: 9999px;
     background: linear-gradient(135deg, #ec4899 0%, #9d4edd 100%);
     opacity: 0.6;
     transition: opacity 0.2s ease;
@@ -362,7 +362,7 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 6px;
+    border-radius: 9999px;
     background: transparent;
     pointer-events: none;
     z-index: 0;
