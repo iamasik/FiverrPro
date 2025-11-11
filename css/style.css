@@ -390,6 +390,45 @@ body {
     display: inline-block;
 }
 
+.random-refresh-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-left: 15px;
+    padding: 8px 12px;
+}
+
+.random-refresh-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #9d4edd;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.stop-random-btn {
+    padding: 6px 16px;
+    background: linear-gradient(135deg, #ec4899 0%, #9d4edd 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3);
+}
+
+.stop-random-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.5);
+}
+
+.stop-random-btn:active {
+    transform: translateY(0);
+}
+
 .countdown-badge {
     position: absolute;
     top: 0;

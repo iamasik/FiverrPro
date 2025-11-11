@@ -74,6 +74,22 @@ document.addEventListener("DOMContentLoaded", function() {
         const saveSettingsBtn = document.getElementById("saveSettings");
         const minTimeInput = document.getElementById("minTime");
         const maxTimeInput = document.getElementById("maxTime");
+        const regularControls = document.getElementById("regularControls");
+        const randomRefreshInfo = document.getElementById("randomRefreshInfo");
+        const stopRandomBtn = document.getElementById("stopRandomBtn");
+
+        // Function to update UI based on random refresh state
+        function updateUIForRandomRefresh(settings) {
+            if (settings && settings.useRandom && settings.enabled) {
+                // Hide regular controls, show random refresh info
+                regularControls.style.display = "none";
+                randomRefreshInfo.style.display = "flex";
+            } else {
+                // Show regular controls, hide random refresh info
+                regularControls.style.display = "flex";
+                randomRefreshInfo.style.display = "none";
+            }
+        }
 
         // Load saved state for the current tab
         chrome.storage.sync.get("autoRefreshTabs", function(result) {
@@ -90,6 +106,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 minTimeInput.value = 0;
                 maxTimeInput.value = 10;
             }
+
+            // Update UI based on random refresh state
+            updateUIForRandomRefresh(settings);
         });
 
         function saveSettings() {
@@ -146,18 +165,43 @@ document.addEventListener("DOMContentLoaded", function() {
                 };
                 chrome.storage.sync.set({ autoRefreshTabs }, function() {
                     closeModalFunc();
+                    // Update UI after saving
+                    updateUIForRandomRefresh(autoRefreshTabs[tabId]);
+                });
+            });
+        }
+
+        function stopRandomRefresh() {
+            chrome.storage.sync.get("autoRefreshTabs", function(result) {
+                const autoRefreshTabs = result.autoRefreshTabs || {};
+                const currentSettings = autoRefreshTabs[tabId] || {};
+                autoRefreshTabs[tabId] = {
+                    ...currentSettings,
+                    useRandom: false
+                };
+                chrome.storage.sync.set({ autoRefreshTabs }, function() {
+                    // Update UI after stopping random refresh
+                    updateUIForRandomRefresh(autoRefreshTabs[tabId]);
                 });
             });
         }
 
         // Event listeners
-        arftToggle.addEventListener("change", saveSettings);
+        arftToggle.addEventListener("change", function() {
+            saveSettings();
+            // Update UI when toggle changes
+            chrome.storage.sync.get("autoRefreshTabs", function(result) {
+                const settings = result.autoRefreshTabs && result.autoRefreshTabs[tabId];
+                updateUIForRandomRefresh(settings);
+            });
+        });
         arftMin.addEventListener("change", saveSettings);
         arftSec.addEventListener("change", saveSettings);
         settingsIcon.addEventListener("click", openModal);
         closeModal.addEventListener("click", closeModalFunc);
         cancelModal.addEventListener("click", closeModalFunc);
         saveSettingsBtn.addEventListener("click", saveAdvancedSettings);
+        stopRandomBtn.addEventListener("click", stopRandomRefresh);
 
         // Close modal when clicking outside
         modal.addEventListener("click", function(e) {
@@ -170,6 +214,22 @@ document.addEventListener("DOMContentLoaded", function() {
         document.addEventListener("keydown", function(e) {
             if (e.key === "Escape" && modal.classList.contains("active")) {
                 closeModalFunc();
+            }
+        });
+
+        // Listen for storage changes to update UI
+        chrome.storage.onChanged.addListener(function(changes, namespace) {
+            if (namespace === "sync" && changes.autoRefreshTabs) {
+                const newTabs = changes.autoRefreshTabs.newValue || {};
+                const settings = newTabs[tabId];
+                if (settings) {
+                    // Update toggle state
+                    arftToggle.checked = settings.enabled || false;
+                    arftMin.value = settings.min || 3;
+                    arftSec.value = settings.sec || 0;
+                    // Update UI for random refresh
+                    updateUIForRandomRefresh(settings);
+                }
             }
         });
     });

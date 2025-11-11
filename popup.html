@@ -98,12 +98,16 @@
                     </span>
                 </label>
             </div>
-            <div class="auto-refresh-controls">
+            <div class="auto-refresh-controls" id="regularControls">
                 <input type="number" id="arft_min" class="auto-refresh-input" placeholder="Min" min="0">
                 <input type="number" id="arft_sec" class="auto-refresh-input" placeholder="Sec" min="0" max="59">
                 <div class="settings-icon-container">
                     <img src="images/Settings.png" id="arft_settings" class="settings-icon" alt="Settings">
                 </div>
+            </div>
+            <div class="random-refresh-info" id="randomRefreshInfo" style="display: none;">
+                <div class="random-refresh-text">Random Refresher Running</div>
+                <button class="stop-random-btn" id="stopRandomBtn">Stop</button>
             </div>
             <div class="feature-label">Auto Refresh</div>
         </div>
