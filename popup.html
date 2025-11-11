@@ -17,6 +17,11 @@
                 </div>
             </div>
         </div>
+        <div class="header-center">
+            <div class="countdown-timer-display" id="countdown-timer">
+                <div class="timer-text" id="timer-text">--:--</div>
+            </div>
+        </div>
         <div class="header-right">
             <div class="header-title-container">
                 <span class="header-title">Fiverr Pro</span>
@@ -80,6 +85,27 @@
                 </label>
             </div>
             <div class="feature-label">Hide Order Price</div>
+        </div>
+
+        <div class="feature-card auto-refresh-card">
+            <div class="toggle-container">
+                <input type="checkbox" id="arft" class="toggle-input">
+                <label for="arft" class="toggle-label">
+                    <span class="toggle-slider">
+                        <span class="toggle-text toggle-text-off">OFF</span>
+                        <span class="toggle-handle"></span>
+                        <span class="toggle-text toggle-text-on">ON</span>
+                    </span>
+                </label>
+            </div>
+            <div class="auto-refresh-controls">
+                <input type="number" id="arft_min" class="auto-refresh-input" placeholder="Min" min="0">
+                <input type="number" id="arft_sec" class="auto-refresh-input" placeholder="Sec" min="0" max="59">
+                <div class="settings-icon-container">
+                    <img src="images/Settings.png" id="arft_settings" class="settings-icon" alt="Settings">
+                </div>
+            </div>
+            <div class="feature-label">Auto Refresh</div>
         </div>
     </div>
 

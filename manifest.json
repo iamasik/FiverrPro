@@ -54,6 +54,17 @@
             "128": "icon.png"
         },
         "default_title": "Fiverr Pro",
-        "default_popup": "popup.html"
-    }
+        "default_popup": "popup.html",
+        "default_badge_background_color": "#ec4899"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "images/Settings.png"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
 }
