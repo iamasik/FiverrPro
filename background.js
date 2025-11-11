@@ -39,7 +39,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             }
         } else if (key === "unread_notifications_count") {
             if (storageChange.newValue > 0) {
-                let notificationOptions = { type: "basic", title: "Fiverr Plus", message: "You have unread notifications.", iconUrl: "images/notification-icon.png" };
+                let notificationOptions = { type: "basic", title: "Fiverr Plus", message: "An unread message waiting for you.", iconUrl: "images/notification-icon.png" };
                 chrome.notifications.create(notificationOptions);
                 chrome.storage.sync.get(["unread_conversations_count"], function (result) {
                     chrome.action.setBadgeText({ text: (result.unread_conversations_count + storageChange.newValue).toString() });
@@ -50,7 +50,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             }
         } else if (key === "unread_conversations_count") {
             if (storageChange.newValue > 0) {
-                let notificationOptions = { type: "basic", title: "Fiverr Plus", message: "You have unread messages.", iconUrl: "images/notification-icon.png" };
+                let notificationOptions = { type: "basic", title: "Fiverr Plus", message: "An unread message waiting for you.", iconUrl: "images/notification-icon.png" };
                 chrome.notifications.create(notificationOptions);
                 chrome.storage.sync.get(["unread_notifications_count"], function (result) {
                     chrome.action.setBadgeText({ text: (result.unread_notifications_count + storageChange.newValue).toString() });
