@@ -67,6 +67,13 @@ document.addEventListener("DOMContentLoaded", function() {
         const arftToggle = document.getElementById("arft");
         const arftMin = document.getElementById("arft_min");
         const arftSec = document.getElementById("arft_sec");
+        const settingsIcon = document.getElementById("arft_settings");
+        const modal = document.getElementById("advancedSettingsModal");
+        const closeModal = document.getElementById("closeModal");
+        const cancelModal = document.getElementById("cancelModal");
+        const saveSettingsBtn = document.getElementById("saveSettings");
+        const minTimeInput = document.getElementById("minTime");
+        const maxTimeInput = document.getElementById("maxTime");
 
         // Load saved state for the current tab
         chrome.storage.sync.get("autoRefreshTabs", function(result) {
@@ -74,12 +81,23 @@ document.addEventListener("DOMContentLoaded", function() {
             arftToggle.checked = settings ? settings.enabled : false;
             arftMin.value = settings ? settings.min : 3;
             arftSec.value = settings ? settings.sec : 0;
+            
+            // Load random refresh settings
+            if (settings) {
+                minTimeInput.value = settings.minTime || 0;
+                maxTimeInput.value = settings.maxTime || 10;
+            } else {
+                minTimeInput.value = 0;
+                maxTimeInput.value = 10;
+            }
         });
 
         function saveSettings() {
             chrome.storage.sync.get("autoRefreshTabs", function(result) {
                 const autoRefreshTabs = result.autoRefreshTabs || {};
+                const currentSettings = autoRefreshTabs[tabId] || {};
                 autoRefreshTabs[tabId] = {
+                    ...currentSettings,
                     enabled: arftToggle.checked,
                     min: parseInt(arftMin.value) || 0,
                     sec: parseInt(arftSec.value) || 0
@@ -88,9 +106,72 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
+        function openModal() {
+            // Load current values into modal inputs
+            chrome.storage.sync.get("autoRefreshTabs", function(result) {
+                const settings = result.autoRefreshTabs && result.autoRefreshTabs[tabId];
+                if (settings) {
+                    minTimeInput.value = settings.minTime || 0;
+                    maxTimeInput.value = settings.maxTime || 10;
+                } else {
+                    minTimeInput.value = 0;
+                    maxTimeInput.value = 10;
+                }
+            });
+            modal.classList.add("active");
+        }
+
+        function closeModalFunc() {
+            modal.classList.remove("active");
+        }
+
+        function saveAdvancedSettings() {
+            const minTime = parseInt(minTimeInput.value) || 0;
+            const maxTime = parseInt(maxTimeInput.value) || 10;
+
+            // Validate that max is greater than or equal to min
+            if (maxTime < minTime) {
+                alert("Maximum time must be greater than or equal to minimum time.");
+                return;
+            }
+
+            chrome.storage.sync.get("autoRefreshTabs", function(result) {
+                const autoRefreshTabs = result.autoRefreshTabs || {};
+                const currentSettings = autoRefreshTabs[tabId] || {};
+                autoRefreshTabs[tabId] = {
+                    ...currentSettings,
+                    minTime: minTime,
+                    maxTime: maxTime,
+                    useRandom: true
+                };
+                chrome.storage.sync.set({ autoRefreshTabs }, function() {
+                    closeModalFunc();
+                });
+            });
+        }
+
+        // Event listeners
         arftToggle.addEventListener("change", saveSettings);
         arftMin.addEventListener("change", saveSettings);
         arftSec.addEventListener("change", saveSettings);
+        settingsIcon.addEventListener("click", openModal);
+        closeModal.addEventListener("click", closeModalFunc);
+        cancelModal.addEventListener("click", closeModalFunc);
+        saveSettingsBtn.addEventListener("click", saveAdvancedSettings);
+
+        // Close modal when clicking outside
+        modal.addEventListener("click", function(e) {
+            if (e.target === modal) {
+                closeModalFunc();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape" && modal.classList.contains("active")) {
+                closeModalFunc();
+            }
+        });
     });
 
     // Notification Alerts toggle

@@ -59,6 +59,30 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
             } else {
                 chrome.action.setBadgeText({ text: "" });
             }
+        } else if (key === "autoRefreshTabs") {
+            // Reset timers when auto refresh settings change
+            const newTabs = storageChange.newValue || {};
+            const oldTabs = storageChange.oldValue || {};
+            
+            // Check for any changes in tab settings
+            for (const tabId in newTabs) {
+                const newSettings = newTabs[tabId];
+                const oldSettings = oldTabs[tabId];
+                
+                // If settings changed (enabled, useRandom, minTime, maxTime, min, sec), reset the timer
+                if (!oldSettings || 
+                    oldSettings.enabled !== newSettings.enabled ||
+                    oldSettings.useRandom !== newSettings.useRandom ||
+                    oldSettings.minTime !== newSettings.minTime ||
+                    oldSettings.maxTime !== newSettings.maxTime ||
+                    oldSettings.min !== newSettings.min ||
+                    oldSettings.sec !== newSettings.sec) {
+                    // Delete existing timer so it gets reinitialized with new settings
+                    if (refreshTimers[tabId]) {
+                        delete refreshTimers[tabId];
+                    }
+                }
+            }
         }
     }
 });
@@ -96,10 +120,25 @@ setInterval(() => {
         for (const tabId in tabs) {
             if (tabs[tabId].enabled) {
                 if (!refreshTimers[tabId]) {
-                    refreshTimers[tabId] = {
-                        remaining: (tabs[tabId].min * 60) + tabs[tabId].sec,
-                        interval: (tabs[tabId].min * 60) + tabs[tabId].sec
-                    };
+                    // Check if random refresh is enabled
+                    if (tabs[tabId].useRandom && tabs[tabId].minTime !== undefined && tabs[tabId].maxTime !== undefined) {
+                        // Generate random time between minTime and maxTime (in minutes)
+                        const minSeconds = tabs[tabId].minTime * 60;
+                        const maxSeconds = tabs[tabId].maxTime * 60;
+                        const randomSeconds = Math.floor(Math.random() * (maxSeconds - minSeconds + 1)) + minSeconds;
+                        refreshTimers[tabId] = {
+                            remaining: randomSeconds,
+                            interval: randomSeconds,
+                            useRandom: true
+                        };
+                    } else {
+                        // Use fixed interval (existing behavior)
+                        refreshTimers[tabId] = {
+                            remaining: (tabs[tabId].min * 60) + tabs[tabId].sec,
+                            interval: (tabs[tabId].min * 60) + tabs[tabId].sec,
+                            useRandom: false
+                        };
+                    }
                 }
 
                 refreshTimers[tabId].remaining--;
@@ -112,7 +151,18 @@ setInterval(() => {
 
                 if (refreshTimers[tabId].remaining <= 0) {
                     chrome.tabs.reload(parseInt(tabId));
-                    refreshTimers[tabId].remaining = refreshTimers[tabId].interval;
+                    
+                    // If using random refresh, generate a new random interval
+                    if (refreshTimers[tabId].useRandom && tabs[tabId].minTime !== undefined && tabs[tabId].maxTime !== undefined) {
+                        const minSeconds = tabs[tabId].minTime * 60;
+                        const maxSeconds = tabs[tabId].maxTime * 60;
+                        const randomSeconds = Math.floor(Math.random() * (maxSeconds - minSeconds + 1)) + minSeconds;
+                        refreshTimers[tabId].remaining = randomSeconds;
+                        refreshTimers[tabId].interval = randomSeconds;
+                    } else {
+                        // Use fixed interval
+                        refreshTimers[tabId].remaining = refreshTimers[tabId].interval;
+                    }
                 }
             } else {
                 if (refreshTimers[tabId]) {

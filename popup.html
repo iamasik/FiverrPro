@@ -118,6 +118,33 @@
             <a href="https://www.emlinter.com" target="_blank" class="footer-link">www.emlinter.com</a>
         </div>
     </div>
+
+    <!-- Advanced Settings Modal -->
+    <div id="advancedSettingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Random Refresh Settings</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-form-group">
+                    <label for="minTime" class="settings-label">Minimum Time (minutes)</label>
+                    <input type="number" id="minTime" class="settings-input" placeholder="0" min="0" step="1">
+                </div>
+                <div class="settings-form-group">
+                    <label for="maxTime" class="settings-label">Maximum Time (minutes)</label>
+                    <input type="number" id="maxTime" class="settings-input" placeholder="10" min="0" step="1">
+                </div>
+                <div class="settings-info">
+                    <p class="info-text">The page will refresh at a random time between the minimum and maximum values.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button modal-button-cancel" id="cancelModal">Cancel</button>
+                <button class="modal-button modal-button-save" id="saveSettings">Save</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
