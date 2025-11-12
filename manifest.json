@@ -39,7 +39,8 @@
         "alarms"
     ],
     "host_permissions": [
-        "*://www.emlinter.com/*"
+        "*://www.emlinter.com/*",
+        "*://generativelanguage.googleapis.com/*"
     ],
     "externally_connectable": {
         "matches": [
