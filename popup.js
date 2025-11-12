@@ -257,4 +257,139 @@ document.addEventListener("DOMContentLoaded", function() {
         let isChecked = document.getElementById("hop").checked;
         chrome.storage.sync.set({ hop: isChecked }, function() {});
     });
+
+    // --- AI Assist Logic ---
+    const aiAssistToggle = document.getElementById("ai-assist-toggle");
+    const aiApiKeyInput = document.getElementById("ai-api-key");
+    const aiModelSelect = document.getElementById("ai-model");
+    const aiAddBtn = document.getElementById("ai-add-btn");
+    const aiEditBtn = document.getElementById("ai-edit-btn");
+    const aiDeleteBtn = document.getElementById("ai-delete-btn");
+    const aiAssistForm = document.getElementById("ai-assist-form");
+    const aiAssistSaved = document.getElementById("ai-assist-saved");
+    const aiSavedKeyDisplay = document.getElementById("ai-saved-key-display");
+    const aiSavedModelDisplay = document.getElementById("ai-saved-model-display");
+
+    // Function to mask API key (show first 2 and last 2 characters)
+    function maskApiKey(apiKey) {
+        if (!apiKey || apiKey.length <= 4) {
+            return "****";
+        }
+        const firstTwo = apiKey.substring(0, 2);
+        const lastTwo = apiKey.substring(apiKey.length - 2);
+        const maskedLength = apiKey.length - 4;
+        const masked = "*".repeat(Math.min(maskedLength, 20)); // Limit masked stars to 20
+        return `${firstTwo}${masked}${lastTwo}`;
+    }
+
+    // Function to get model display name
+    function getModelDisplayName(modelValue) {
+        const modelMap = {
+            "gemini": "Gemini"
+        };
+        return modelMap[modelValue] || modelValue;
+    }
+
+    // Function to load saved AI settings
+    function loadAISettings() {
+        chrome.storage.sync.get(["aiApiKey", "aiModel"], function(result) {
+            if (result.aiApiKey && result.aiApiKey.trim() !== "") {
+                // Show saved view, hide form
+                aiAssistForm.style.display = "none";
+                aiAssistSaved.style.display = "flex";
+                
+                // Display masked API key
+                aiSavedKeyDisplay.textContent = maskApiKey(result.aiApiKey);
+                
+                // Display model
+                const model = result.aiModel || "gemini";
+                aiSavedModelDisplay.textContent = `Model: ${getModelDisplayName(model)}`;
+            } else {
+                // Show form, hide saved view
+                aiAssistForm.style.display = "flex";
+                aiAssistSaved.style.display = "none";
+            }
+        });
+    }
+
+    // Function to save AI settings
+    function saveAISettings() {
+        const apiKey = aiApiKeyInput.value.trim();
+        const model = aiModelSelect.value;
+
+        if (!apiKey) {
+            // Show error state with red border
+            aiApiKeyInput.classList.add("error");
+            // Remove error state after user starts typing
+            aiApiKeyInput.addEventListener("input", function removeError() {
+                aiApiKeyInput.classList.remove("error");
+                aiApiKeyInput.removeEventListener("input", removeError);
+            });
+            return;
+        }
+
+        // Remove error state if present
+        aiApiKeyInput.classList.remove("error");
+
+        chrome.storage.sync.set({
+            aiApiKey: apiKey,
+            aiModel: model
+        }, function() {
+            // Clear input
+            aiApiKeyInput.value = "";
+            // Reload to show saved view
+            loadAISettings();
+        });
+    }
+
+    // Function to edit API key
+    function editApiKey() {
+        chrome.storage.sync.get(["aiApiKey", "aiModel"], function(result) {
+            if (result.aiApiKey) {
+                // Populate form with existing values
+                aiApiKeyInput.value = result.aiApiKey;
+                aiModelSelect.value = result.aiModel || "gemini";
+                
+                // Show form, hide saved view
+                aiAssistForm.style.display = "flex";
+                aiAssistSaved.style.display = "none";
+            }
+        });
+    }
+
+    // Function to delete API key
+    function deleteApiKey() {
+        chrome.storage.sync.remove(["aiApiKey", "aiModel"], function() {
+            // Clear input
+            aiApiKeyInput.value = "";
+            // Reload to show form
+            loadAISettings();
+        });
+    }
+
+    // Event listeners
+    aiAddBtn.addEventListener("click", saveAISettings);
+    aiEditBtn.addEventListener("click", editApiKey);
+    aiDeleteBtn.addEventListener("click", deleteApiKey);
+
+    // Allow Enter key to save
+    aiApiKeyInput.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            saveAISettings();
+        }
+    });
+
+    // Load AI settings on page load
+    loadAISettings();
+
+    // Load AI Assist toggle state
+    chrome.storage.sync.get(["aiAssistEnabled"], function(result) {
+        aiAssistToggle.checked = result.aiAssistEnabled || false;
+    });
+
+    // Save AI Assist toggle state
+    aiAssistToggle.addEventListener("change", function() {
+        const isEnabled = aiAssistToggle.checked;
+        chrome.storage.sync.set({ aiAssistEnabled: isEnabled }, function() {});
+    });
 });

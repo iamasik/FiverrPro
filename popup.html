@@ -38,6 +38,42 @@
         </div>
     </div>
 
+    <!-- AI Assist Section -->
+    <div class="ai-assist-card">
+        <div class="ai-assist-header">
+            <div class="toggle-container">
+                <input type="checkbox" id="ai-assist-toggle" class="toggle-input">
+                <label for="ai-assist-toggle" class="toggle-label">
+                    <span class="toggle-slider">
+                        <span class="toggle-text toggle-text-off">OFF</span>
+                        <span class="toggle-handle"></span>
+                        <span class="toggle-text toggle-text-on">ON</span>
+                    </span>
+                </label>
+            </div>
+            <div class="feature-label">AI Assist</div>
+        </div>
+        <div id="ai-assist-form" class="ai-assist-form" style="display: flex;">
+            <div class="ai-assist-input-group">
+                <input type="text" id="ai-api-key" class="ai-api-key-input" placeholder="Enter API Key">
+                <select id="ai-model" class="ai-model-select">
+                    <option value="gemini" selected>Gemini</option>
+                </select>
+                <button id="ai-add-btn" class="ai-add-btn">Add</button>
+            </div>
+        </div>
+        <div id="ai-assist-saved" class="ai-assist-saved" style="display: none;">
+            <div class="ai-saved-key-row">
+                <div class="ai-saved-key" id="ai-saved-key-display"></div>
+                <div class="ai-saved-actions">
+                    <img src="images/Edit.png" id="ai-edit-btn" class="ai-action-icon ai-edit-icon" alt="Edit" title="Edit">
+                    <img src="images/Trash.png" id="ai-delete-btn" class="ai-action-icon ai-delete-icon" alt="Delete" title="Delete">
+                </div>
+            </div>
+            <div class="ai-saved-model" id="ai-saved-model-display"></div>
+        </div>
+    </div>
+
     <div class="features-grid" id="options-container">
         <div class="feature-card">
             <div class="toggle-container">
