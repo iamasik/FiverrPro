@@ -144,30 +144,58 @@ setInterval(() => {
                 refreshTimers[tabId].remaining--;
 
                 chrome.tabs.get(parseInt(tabId), (tab) => {
+                    if (chrome.runtime.lastError) {
+                        // Tab no longer exists, clean up
+                        delete refreshTimers[tabId];
+                        chrome.storage.sync.get("autoRefreshTabs", (result) => {
+                            const tabs = result.autoRefreshTabs || {};
+                            if (tabs[tabId]) {
+                                delete tabs[tabId];
+                                chrome.storage.sync.set({ autoRefreshTabs: tabs });
+                            }
+                        });
+                        return;
+                    }
                     if (tab && tab.active) {
                         // Badge removed - countdown will display in popup instead
                     }
                 });
 
-                if (refreshTimers[tabId].remaining <= 0) {
-                    chrome.tabs.reload(parseInt(tabId));
-                    
-                    // If using random refresh, generate a new random interval
-                    if (refreshTimers[tabId].useRandom && tabs[tabId].minTime !== undefined && tabs[tabId].maxTime !== undefined) {
-                        const minSeconds = tabs[tabId].minTime * 60;
-                        const maxSeconds = tabs[tabId].maxTime * 60;
-                        const randomSeconds = Math.floor(Math.random() * (maxSeconds - minSeconds + 1)) + minSeconds;
-                        refreshTimers[tabId].remaining = randomSeconds;
-                        refreshTimers[tabId].interval = randomSeconds;
-                    } else {
-                        // Use fixed interval
-                        refreshTimers[tabId].remaining = refreshTimers[tabId].interval;
-                    }
+                if (refreshTimers[tabId] && refreshTimers[tabId].remaining <= 0) {
+                    chrome.tabs.reload(parseInt(tabId), () => {
+                        if (chrome.runtime.lastError) {
+                            // Tab no longer exists, clean up
+                            delete refreshTimers[tabId];
+                            chrome.storage.sync.get("autoRefreshTabs", (result) => {
+                                const tabs = result.autoRefreshTabs || {};
+                                if (tabs[tabId]) {
+                                    delete tabs[tabId];
+                                    chrome.storage.sync.set({ autoRefreshTabs: tabs });
+                                }
+                            });
+                            return;
+                        }
+                        // If using random refresh, generate a new random interval
+                        if (refreshTimers[tabId] && refreshTimers[tabId].useRandom && tabs[tabId].minTime !== undefined && tabs[tabId].maxTime !== undefined) {
+                            const minSeconds = tabs[tabId].minTime * 60;
+                            const maxSeconds = tabs[tabId].maxTime * 60;
+                            const randomSeconds = Math.floor(Math.random() * (maxSeconds - minSeconds + 1)) + minSeconds;
+                            refreshTimers[tabId].remaining = randomSeconds;
+                            refreshTimers[tabId].interval = randomSeconds;
+                        } else if (refreshTimers[tabId]) {
+                            // Use fixed interval
+                            refreshTimers[tabId].remaining = refreshTimers[tabId].interval;
+                        }
+                    });
                 }
             } else {
                 if (refreshTimers[tabId]) {
                     delete refreshTimers[tabId];
-                    chrome.action.setBadgeText({ text: "", tabId: parseInt(tabId) });
+                    chrome.action.setBadgeText({ text: "", tabId: parseInt(tabId) }, () => {
+                        if (chrome.runtime.lastError) {
+                            // Tab no longer exists, ignore error
+                        }
+                    });
                 }
             }
         }
@@ -236,7 +264,11 @@ chrome.runtime.onMessage.addListener(function (e, t, a) {
         console.log("[GROUP MODE] Message Received from Scraper", t.tab.id);
         if (tabIds.includes(t.tab.id)) {
             tabsLoaded++;
-            chrome.tabs.remove(t.tab.id);
+            chrome.tabs.remove(t.tab.id, () => {
+                if (chrome.runtime.lastError) {
+                    // Tab already closed, ignore error
+                }
+            });
         }
         if (tabsLoaded === tabIds.length && active) {
             globalPort.postMessage({ status: "completed" });
@@ -246,7 +278,11 @@ chrome.runtime.onMessage.addListener(function (e, t, a) {
     } else if (e.status && t.tab && "single" === e.searchMode && "single" === searchMode) {
         console.log("[SINGLE MODE] Message Received from Scraper", t.tab.id);
         if (tabIds.includes(t.tab.id)) {
-            chrome.tabs.remove(t.tab.id);
+            chrome.tabs.remove(t.tab.id, () => {
+                if (chrome.runtime.lastError) {
+                    // Tab already closed, ignore error
+                }
+            });
             let n = checkRank(e.listings, username);
             if (null != n) {
                 let s = 48 * (e.page - 1) + n;
